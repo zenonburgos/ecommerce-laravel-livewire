@@ -124,7 +124,9 @@
                         </div>
 
                         <div class="col-span-3">
-                            <img src="{{Storage::url($categories->first()->image)}}" alt="">
+                            <img class="h-64 w-full object-cover object-center" src="{{asset('storage/'. $categories->first()->image )}}" alt="">
+                            {{-- <img class="h-64 w-full object-cover object-center" src="{{Storage::url($categories->first()->image)}}" alt=""> --}}
+                            {{-- {{ asset("storage/imgHabitaciones/$hab->hab_urlimg" )}} --}}
                         </div>
                     </div>
                 </div>
