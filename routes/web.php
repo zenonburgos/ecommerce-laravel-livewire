@@ -7,6 +7,8 @@ use Illuminate\Routing\Route as RoutingRoute;
 
 use App\Http\Controllers\CategoryController;
 
+use App\Http\Controllers\ProductController;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -21,6 +23,8 @@ use App\Http\Controllers\CategoryController;
 Route::get('/', WelcomeController::class);
 
 Route::get('categories/{category}', [CategoryController::class, 'show'])->name('categories.show');
+
+Route::get('products/{product}', [ProductController::class, 'show'])->name('products.show');
 
 Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', function () {
     return view('dashboard');
