@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -14,6 +15,22 @@ class Product extends Model
 
     //En este caso con guarded se especifican los campos que no se rellenarán por asignación masiva de datos
     protected $guarded = ['id', 'created_at', 'updated_at'];
+    
+    //Accesores
+    public function getStockAttribute(){
+        if ($this->subcategory->size) {
+            return  ColorSize::whereHas('size.product', function(Builder $query){
+                        $query->where('id', $this->id);
+                    })->sum('quantity');
+        } elseif($this->subcategory->color) {
+            return  ColorProduct::whereHas('product', function(Builder $query){
+                        $query->where('id', $this->id);
+                    })->sum('quantity');
+        }else{
+            return $this->quantity;
+        }
+        
+    }
 
     //Relación uno a muchos
     public function sizes(){
