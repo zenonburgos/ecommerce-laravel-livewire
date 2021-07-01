@@ -8,7 +8,7 @@
                             wire:model.defer="contact"
                             placeholder="Ingrese el nombre de la persona que recibirá el producto" 
                             class="w-full" />
-                <x-jet-input-err for="contact" />
+                <x-jet-input-error for="contact" />
             </div>
 
             <div>
@@ -17,7 +17,7 @@
                             wire:model.defer="phone"
                             placeholder="Ingrese un número de teléfono de contacto" 
                             class="w-full" />
-                <x-jet-input-err for="phone" />
+                <x-jet-input-error for="phone" />
             </div>
         </div>
 
@@ -56,7 +56,7 @@
                             @endforeach
                         </select>
 
-                        <x-jet-input-err for="department_id" />
+                        <x-jet-input-error for="department_id" />
                     </div>
 
                     {{-- Ciudades --}}
@@ -70,7 +70,7 @@
                             @endforeach
                         </select>
 
-                        <x-jet-input-err for="city_id" />
+                        <x-jet-input-error for="city_id" />
                     </div>
 
                     {{-- Distritos --}}
@@ -84,24 +84,31 @@
                             @endforeach
                         </select>
 
-                        <x-jet-input-err for="district_id" />
+                        <x-jet-input-error for="district_id" />
                     </div>
 
                     <div>
                         <x-jet-label value="Dirección" />
                         <x-jet-input class="w-full" wire:model="address" type="text" />
+
+                        <x-jet-input-error for="address" />
                     </div>
 
                     <div class="col-span-2">
                         <x-jet-label value="Referencia" />
-                        <x-jet-input class="w-full" wire:model="reference" type="text" />
+                        <x-jet-input class="w-full" wire:model="references" type="text" />
+                        <x-jet-input-error for="references" />
                     </div>
 
                 </div>
             </div>
         </div>
         <div>
-            <x-jet-button class="mt-6 mb-4" wire:click="create_order">
+            <x-jet-button 
+            wire:loading.attr="disabled"
+            wire:target="create_order"
+            class="mt-6 mb-4" 
+            wire:click="create_order">
                 Continuar con la compra
             </x-jet-button>
         </div>
@@ -155,13 +162,23 @@
                 </p>
                 <p class="flex justify-between items-center">
                     Envío
-                    <span class="font-semibold">Gratis</span>
+                    <span class="font-semibold">
+                        @if ($envio_type == 1 || $shipping_cost == 0) 
+                            Gratis    
+                        @else
+                            {{$shipping_cost}} USD
+                        @endif
+                    </span>
                 </p>
 
                 <hr class="mt-4 mb-3">
                 <p class="flex justify-between items-center font-semibold">
                     <span class="text-lg">Total</span>
-                    {{ Cart::subtotal() }} USD
+                    @if ($envio_type == 1)
+                        {{ Cart::subtotal() }} USD
+                    @else
+                        {{ Cart::subtotal() + $shipping_cost}} USD
+                    @endif
                 </p>
             </div>
         </div>

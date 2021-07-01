@@ -19,7 +19,7 @@ class Order extends Model
 
     //Relación uno a muchos inversa
     public function department(){
-        return $this->belongsTo(Deppartment::class);
+        return $this->belongsTo(Department::class);
     }
 
     public function city(){
