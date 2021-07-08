@@ -9,10 +9,19 @@ use PhpParser\JsonDecoder;
 
 class OrderController extends Controller
 {
-    public function payment(Order $order){
+
+    public function index(){
+        return view('orders.index');
+    }
+
+    public function show(Order $order){
+
+        $this->authorize('author', $order);
 
         $items = json_decode($order->content);
 
-        return view('orders.payment', compact('order', 'items'));
+        return view('orders.show', compact('order', 'items'));
     }
+
+    
 }
