@@ -19,7 +19,7 @@ class OrderPolicy
     }
 
     public function payment(User $user, Order $order){
-        if ($order->status == 2) {
+        if ($order->status == 1) {
             return true;
         }else{
             return false;
