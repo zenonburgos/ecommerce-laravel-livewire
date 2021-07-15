@@ -48,3 +48,65 @@ function qty_added($product_id, $color_id = null, $size_id = null){
 function qty_available($product_id, $color_id = null, $size_id = null){
     return quantity($product_id, $color_id, $size_id) - qty_added($product_id, $color_id, $size_id);
 }
+
+function disccount($item){
+    $product = Product::find($item->id);
+    $qty_available = qty_available($item->id, $item->options->color_id, $item->options->size_id);
+
+    if ($item->options->size_id) {
+      
+        $size = Size::find($item->options->size_id);
+
+        $size->colors()->detach($item->options->color_id); //Borra la relación que existe entre talla y color
+
+        $size->colors()->attach([
+            $item->options->color_id => ['quantity' => $qty_available] //vuelve a agregar la relación con la cantidad actualizada
+        ]);
+
+    }elseif($item->options->color_id){
+       
+        $product->colors()->detach($item->options->color_id); //Borra la relación que existe entre producto y color
+
+        $product->colors()->attach([
+            $item->options->color_id => ['quantity' => $qty_available] //vuelve a agregar la relación con la cantidad actualizada
+        ]);
+
+    }else{
+
+        $product->quantity = $qty_available;
+        $product->save();
+
+    }
+}
+
+function increase($item){
+
+    $product = Product::find($item->id);
+
+    $quantity = quantity($item->id, $item->options->color_id, $item->options->size_id) + $item->qty;
+
+    if ($item->options->size_id) {
+      
+        $size = Size::find($item->options->size_id);
+
+        $size->colors()->detach($item->options->color_id); //Borra la relación que existe entre talla y color
+
+        $size->colors()->attach([
+            $item->options->color_id => ['quantity' => $quantity] //vuelve a agregar la relación con la cantidad actualizada
+        ]);
+
+    }elseif($item->options->color_id){
+       
+        $product->colors()->detach($item->options->color_id); //Borra la relación que existe entre producto y color
+
+        $product->colors()->attach([
+            $item->options->color_id => ['quantity' => $quantity] //vuelve a agregar la relación con la cantidad actualizada
+        ]);
+
+    }else{
+
+        $product->quantity = $quantity;
+        $product->save();
+
+    }
+}
