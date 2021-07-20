@@ -4,15 +4,18 @@ namespace App\Http\Livewire\Admin;
 
 use App\Models\Brand;
 use App\Models\Category;
+use Livewire\Component;
+
 use App\Models\Product;
 use App\Models\Subcategory;
 use Illuminate\Database\Eloquent\Builder;
-use Livewire\Component;
+
+use Illuminate\Support\Str;
 
 class EditProduct extends Component
 {
 
-    public $product, $categories, $subcategories, $brands;
+    public $product, $categories, $subcategories, $brands, $slug;
 
     public $category_id;
 
@@ -20,10 +23,11 @@ class EditProduct extends Component
         'category_id' => 'required',
         'product.subcategory_id' => 'required',
         'product.name' => 'required',
-        'product.slug' => 'required|unique:products',
-        'product.price' => 'required',
+        'slug' => 'required|unique:products,slug',
         'product.description' => '',
         'product.brand_id' => '',
+        'product.price' => 'required',
+        'product.quantity' => 'numeric',
         
     ];
 
@@ -36,9 +40,15 @@ class EditProduct extends Component
 
         $this->subcategories = Subcategory::where('category_id', $this->category_id)->get();
 
+        $this->slug = $this->product->slug;
+
         $this->brands = Brand::whereHas('categories', function(Builder $query) {
             $query->where('category_id', $this->category_id);
         })->get();
+    }
+
+    public function updatedProductName($value){
+        $this->slug = Str::slug($value);
     }
 
     public function updatedCategoryId($value){
@@ -55,6 +65,25 @@ class EditProduct extends Component
 
     public function getSubcategoryProperty(){
         return Subcategory::find($this->product->subcategory_id);
+    }
+
+    public function save(){
+        $rules = $this->rules;
+        $rules['slug'] = 'required|unique:products,slug,' . $this->product->id;
+
+        if ($this->product->subcategory_id) {
+            if (!$this->subcategory->color && !$this->subcategory->size) {
+                $rules['product.quantity'] = 'required|numeric';
+            }
+        }
+
+        $this->validate($rules);
+
+        $this->product->slug = $this->slug;
+
+        $this->product->save();
+
+        $this->emit('saved');
     }
 
     public function render()
