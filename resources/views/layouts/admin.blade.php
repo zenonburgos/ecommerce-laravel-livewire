@@ -21,8 +21,11 @@
         <!-- Scripts -->
         <script src="{{ mix('js/app.js') }}" defer></script>
         
+        <!-- CKEditor -->
         <script src="https://cdn.ckeditor.com/ckeditor5/29.0.0/classic/ckeditor.js"></script>
 
+        <!-- SweetAlert2 -->
+        <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     </head>
     <body class="font-sans antialiased">
         <x-jet-banner />
